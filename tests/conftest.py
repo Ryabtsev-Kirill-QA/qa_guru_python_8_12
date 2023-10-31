@@ -1,8 +1,7 @@
 import pytest
-
+from selene import browser
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selene.support.shared import browser
 
 from utils import attach
 
@@ -24,7 +23,9 @@ def setup_browser(request):
         options=options
     )
     browser.config.driver = driver
-    browser.config.timeout = 2.0
+    browser.config.window_width = 1920
+    browser.config.window_height = 1080
+    browser.config.base_url = 'https://demoqa.com'
 
     yield browser
 
