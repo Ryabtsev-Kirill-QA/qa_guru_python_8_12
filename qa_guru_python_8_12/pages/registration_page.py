@@ -1,7 +1,5 @@
-from selene.support.shared import browser
-from selene import have
+from selene import browser, have, be, by
 from qa_guru_python_8_12 import picture
-from qa_guru_python_8_12.data.users import User
 
 
 class RegistrationPage:
@@ -18,37 +16,76 @@ class RegistrationPage:
         browser.should(have.title('DEMOQA'))
         browser.element('.main-header').should(have.text('Practice Form'))
 
-    def register(self, user: User):
-        self.first_name.type(user.first_name)
-        self.last_name.type(user.last_name)
-        self.email.type(user.email)
-        browser.all('[name="gender"]').element_by(have.value(user.gender)).element('..').click()
-        browser.element('#userNumber').type(user.mobile_number)
-        browser.element('#dateOfBirthInput').click()
-        browser.element('.react-datepicker__month-select').type(user.date_of_birth.strftime("%B"))
-        browser.element('.react-datepicker__year-select').type(user.date_of_birth.year)
-        browser.element(f'.react-datepicker__day--0{user.date_of_birth.day}').click()
-        for subject in user.subjects:
-            browser.element('#subjectsInput').type(subject).press_enter()
-        for hobby in user.hobbies:
-            browser.all('label[for^="hobbies-checkbox"]').element_by(have.exact_text(hobby)).click()
-        browser.element('#uploadPicture').set_value(picture.path(user.picture))
-        browser.element('#currentAddress').type(user.address)
-        browser.element('#react-select-3-input').type(user.state).press_enter()
-        browser.element('#react-select-4-input').type(user.city).press_enter()
-        browser.element('#submit').press_enter()
+    def fill_first_name(self, value):
+        self.first_name.type(value)
+        return self
 
-    def should_have_registered(self, user: User):
-        browser.element('.table').all('td').even.should(
-            have.exact_texts(
-                f'{user.first_name} {user.last_name}',
-                user.email,
-                user.gender,
-                user.mobile_number,
-                f'{user.date_of_birth.day} {user.date_of_birth.strftime("%B")},{user.date_of_birth.year}',
-                ', '.join(user.subjects),
-                ', '.join(user.hobbies),
-                user.picture,
-                user.address,
-                f'{user.state} {user.city}'
-            ))
+    def fill_last_name(self, value):
+        self.last_name.type(value)
+        return self
+
+    def fill_email(self, value):
+        self.email.type(value)
+        return self
+
+    def choose_gender(self, checkbox_position):
+        browser.all('.custom-control-input').should(be.disabled)
+        browser.element(f'#gender-radio-{checkbox_position}').double_click()
+        browser.element(f'#gender-radio-{checkbox_position}').should(be.enabled)
+        return self
+
+    def fill_mobile_number(self, value):
+        browser.element('#userNumber').type(value)
+        return self
+
+    def fill_date_of_birth(self, year, month, day):
+        browser.element('#dateOfBirthInput').click()
+        browser.element('.react-datepicker__month-select').click().element(by.text(month)).click()
+        browser.element('.react-datepicker__year-select').click().element(by.text(year)).click()
+        browser.element(f'.react-datepicker__day--0{day}').click()
+        return self
+
+    def fill_subjects(self, value):
+        browser.element('#subjectsInput').should(be.blank).type(value).press_enter()
+        return self
+
+    def choose_hobbies(self, checkbox_position):
+        browser.element(f'[for="hobbies-checkbox-{checkbox_position}"]').click()
+        return self
+
+    def upload_picture(self, file):
+        browser.element('#uploadPicture').set_value(picture.path(file))
+        return self
+
+    def fill_current_address(self, value):
+        browser.element('#currentAddress').type(value)
+        return self
+
+    def select_state(self, value):
+        browser.element('#react-select-3-input').type(value).press_enter()
+        return self
+
+    def select_city(self, value):
+        browser.element('#react-select-4-input').type('Delhi').press_enter()
+        return self
+
+    def submit_form(self):
+        browser.element('#submit').press_enter()
+        return self
+
+    def should_have_registered_user_with(self, full_name, email, gender, mobile_number, day_of_birth, subjects, hobbies,
+                                         picture, current_address,
+                                         state_and_city):
+        browser.element('.modal-header').should(have.text('Thanks for submitting the form'))
+        browser.element('.table-responsive').all('tr td:nth-child(2)').should(have.texts(
+            full_name,
+            email,
+            gender,
+            mobile_number,
+            day_of_birth,
+            subjects,
+            hobbies,
+            picture,
+            current_address,
+            state_and_city))
+        browser.element('#closeLargeModal').press_enter()
