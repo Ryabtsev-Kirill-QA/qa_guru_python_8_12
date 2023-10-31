@@ -1,4 +1,5 @@
-from selene import browser, have
+from selene.support.shared import browser
+from selene import have
 from qa_guru_python_8_12 import picture
 from qa_guru_python_8_12.data.users import User
 
