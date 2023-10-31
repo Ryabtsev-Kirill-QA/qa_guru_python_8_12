@@ -9,7 +9,7 @@ class RegistrationPage:
         self.last_name = browser.element('#lastName')
         self.email = browser.element('#userEmail')
 
-    def open(self):
+    def open(self) -> None:
         browser.open('/automation-practice-form')
         browser.element('#fixedban').execute_script('element.remove()')
         browser.element('footer').execute_script('element.remove()')
@@ -75,7 +75,7 @@ class RegistrationPage:
 
     def should_have_registered_user_with(self, full_name, email, gender, mobile_number, day_of_birth, subjects, hobbies,
                                          picture, current_address,
-                                         state_and_city):
+                                         state_and_city) -> None:
         browser.element('.modal-header').should(have.text('Thanks for submitting the form'))
         browser.element('.table-responsive').all('tr td:nth-child(2)').should(have.texts(
             full_name,
