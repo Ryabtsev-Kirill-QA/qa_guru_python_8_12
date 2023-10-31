@@ -2,7 +2,7 @@ import pytest
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selene import Browser, Config
+from selene import browser
 
 from utils import attach
 
@@ -23,8 +23,9 @@ def setup_browser(request):
         command_executor=f"https://user1:1234@selenoid.autotests.cloud/wd/hub",
         options=options
     )
+    browser.config.driver = driver
+    browser.config.timeout = 2.0
 
-    browser = Browser(Config(driver))
     yield browser
 
     attach.add_screenshot(browser)
