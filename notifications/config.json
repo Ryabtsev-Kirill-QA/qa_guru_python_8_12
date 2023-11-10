@@ -10,7 +10,7 @@
     "enableChart": true
   },
   "telegram": {
-    "token": "ВСТАВЬ ТОКЕН БОТА",
+    "token": "6413726846:AAHiZReXdQZguwEeLMU58wYKqtDpr573hg8",
     "chat": "-1002138482197",
     "replyTo": ""
   }
